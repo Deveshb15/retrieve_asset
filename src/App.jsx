@@ -1,23 +1,42 @@
 import { useState } from 'react'
-import logo from './logo.svg'
 import './App.css'
 
+import axios from 'axios'
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [assets, setAssets] = useState([])
+
+  const getData = () => {
+    axios(`https://api.opensea.io/api/v1/assets?owner=0x3689df917b622d8c35e01577bde8198b7e79b83d&order_direction=desc&offset=0&limit=20`)
+    .then(res => {
+        const temp_arr = [] 
+        const data = res.data
+        const asset_arr = data.assets
+        asset_arr.forEach(asset => {
+          temp_arr.push({
+                name: asset.name,
+                description: asset.description,
+                tokenID: asset.token_id,
+                image: asset.image_url
+            })
+        })
+        console.log(temp_arr)
+        setAssets(temp_arr)
+    })
+  }
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>Hello Vite + React!</p>
         <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
+          <button type="button" onClick={getData}>
+            count is
           </button>
         </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
+        {assets.map(asset => {
+            return <p>{asset.name}</p>
+          })}
         <p>
           <a
             className="App-link"
